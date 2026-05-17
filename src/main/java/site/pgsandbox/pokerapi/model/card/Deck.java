@@ -1,5 +1,9 @@
 package site.pgsandbox.pokerapi.model.card;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,9 +21,10 @@ public class Deck {
     @GeneratedValue
     private Long id;
 
-    private Card[] cardList;
+    @ElementCollection
+    private List<Card> cardList = new ArrayList<>();
 
-    public Deck(Card[] aCardList) {
+    public Deck(List<Card> aCardList) {
         this.cardList = aCardList;
     }
 }
