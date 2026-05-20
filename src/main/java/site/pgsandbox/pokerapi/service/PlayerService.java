@@ -59,7 +59,7 @@ public class PlayerService {
         player.setUsername(username);
         player.setChips(chips);
 
-        return player;
+        return repository.save(player);
     }
 
     /**
