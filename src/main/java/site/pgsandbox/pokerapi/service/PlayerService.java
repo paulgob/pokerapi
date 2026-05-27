@@ -2,6 +2,7 @@ package site.pgsandbox.pokerapi.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import site.pgsandbox.pokerapi.exception.player.DuplicateUsernameException;
 import site.pgsandbox.pokerapi.exception.player.PlayerNotFoundException;
 import site.pgsandbox.pokerapi.model.player.Player;
 import site.pgsandbox.pokerapi.repository.PlayerRepository;
@@ -17,11 +18,14 @@ public class PlayerService {
 
     /**
      * Create a new player.
-     * @param username His username.
+     * @param username His username (must be unique).
      * @param chips The amount of chips he has.
      * @return the newly created player.
      */
     public Player createAPlayer(String username, int chips) {
+        if (repository.findByUsername(username).isPresent()) {
+            throw new DuplicateUsernameException(username);
+        }
         return repository.save(new Player(username, chips));
     }
 
