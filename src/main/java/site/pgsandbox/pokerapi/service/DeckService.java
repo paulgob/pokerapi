@@ -11,15 +11,15 @@ import site.pgsandbox.pokerapi.model.card.Card;
 import site.pgsandbox.pokerapi.model.card.Deck;
 import site.pgsandbox.pokerapi.model.card.Rank;
 import site.pgsandbox.pokerapi.model.card.Suit;
-import site.pgsandbox.pokerapi.repository.DeckRepositery;
+import site.pgsandbox.pokerapi.repository.DeckRepository;
 
 @Service
 @Transactional
 public class DeckService {
 
-    private final DeckRepositery repositery;
+    private final DeckRepository repositery;
 
-    public DeckService(DeckRepositery repositery) {
+    public DeckService(DeckRepository repositery) {
         this.repositery = repositery;
     }
 
