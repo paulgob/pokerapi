@@ -2,18 +2,28 @@ package site.pgsandbox.pokerapi.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import site.pgsandbox.pokerapi.exception.player.PlayerNotFoundException;
 import site.pgsandbox.pokerapi.exception.table.MaxPlayerAmountInvalidException;
+import site.pgsandbox.pokerapi.exception.table.TableIsFullException;
 import site.pgsandbox.pokerapi.exception.table.TableNotFoundException;
+import site.pgsandbox.pokerapi.model.player.Player;
 import site.pgsandbox.pokerapi.model.table.Table;
+import site.pgsandbox.pokerapi.repository.PlayerRepository;
 import site.pgsandbox.pokerapi.repository.TableRepository;
 
 @Service
 public class TableService {
 
     private final TableRepository repository;
+    private final PlayerRepository playerRepository;
 
-    public TableService(TableRepository repository) {
+    public TableService(
+        TableRepository repository,
+        PlayerRepository playerRepository
+    ) {
         this.repository = repository;
+        this.playerRepository = playerRepository;
     }
 
     /**
@@ -70,5 +80,31 @@ public class TableService {
      */
     public void deleteTable(Long id) {
         repository.deleteById(id);
+    }
+
+    /**
+     * Add a player to a Table.
+     * @param tableId The table where the player will be added.
+     * @param playerId The player that will be added.
+     * @return The newly added player.
+     */
+    @Transactional
+    public Player addAPlayer(Long tableId, Long playerId) {
+        Player player = playerRepository
+            .findById(playerId)
+            .orElseThrow(() -> new PlayerNotFoundException(playerId));
+        Table table = repository
+            .findById(tableId)
+            .orElseThrow(() -> new TableNotFoundException(tableId));
+
+        List<Player> players = table.getPlayers();
+
+        if (players.size() >= table.getMaxPlayer()) {
+            throw new TableIsFullException();
+        } else {
+            players.add(player);
+            repository.save(table);
+            return player;
+        }
     }
 }

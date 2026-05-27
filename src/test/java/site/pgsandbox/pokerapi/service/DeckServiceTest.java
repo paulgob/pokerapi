@@ -16,6 +16,10 @@ class DeckServiceTest {
     @Autowired
     private DeckService service;
 
+    /**
+     * A deck should have 52 cards.
+     * Each card is a unique combination of rank, suit.
+     */
     @Test
     void ItShouldHaveFiftyTwoUniquesCards() {
         Deck deck = service.createADeck();
@@ -23,6 +27,9 @@ class DeckServiceTest {
         assertEquals(52, deck.getCardList().size());
     }
 
+    /**
+     * When dealing a card, it should not be possible to deal the same card twice
+     */
     @Test
     void NoCardIsDealtTwice() {
         Deck deck = service.createADeck();

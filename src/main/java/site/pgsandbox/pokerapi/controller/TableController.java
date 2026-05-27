@@ -19,27 +19,27 @@ public class TableController {
         this.service = service;
     }
 
-    @PostMapping("/Table")
+    @PostMapping("/table")
     public Table newTable(int maxPlayer) {
         return service.createATable(maxPlayer);
     }
 
-    @GetMapping("/Tables")
+    @GetMapping("/tables")
     public List<Table> allTable() {
         return service.getAllTables();
     }
 
-    @GetMapping("/Table/{id}")
+    @GetMapping("/table/{id}")
     public Table findTable(@PathVariable Long id) {
         return service.getTableById(id);
     }
 
-    @PutMapping("/Table/{id}")
+    @PutMapping("/table/{id}")
     public Table updateTable(@PathVariable Long id, int maxPlayer) {
         return service.updateTable(id, maxPlayer);
     }
 
-    @DeleteMapping("/Table/{id}")
+    @DeleteMapping("/table/{id}")
     public void deleteTable(@PathVariable Long id) {
         service.deleteTable(id);
     }
