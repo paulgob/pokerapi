@@ -1,9 +1,11 @@
 package site.pgsandbox.pokerapi.model.player;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.UniqueConstraint;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -21,6 +23,7 @@ public class Player {
     @GeneratedValue
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String username;
 
     @ElementCollection
