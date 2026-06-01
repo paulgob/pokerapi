@@ -113,12 +113,17 @@ public class GameService {
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < players.size(); j++) {
                 List<Card> hand = players.get(j).getHand();
-
                 hand.add(deckService.getACard(deck.getId()));
-
                 players.get(j).setHand(hand);
             }
         }
+
+        // Initialize the pot
+        int pot = 0;
+        for (int i = 0; i < players.size(); i++) {
+            pot += players.get(i).getChips();
+        }
+        game.setPot(pot);
 
         game.setStatus(Status.PRE_FLOP);
 

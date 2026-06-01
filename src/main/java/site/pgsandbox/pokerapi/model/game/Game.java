@@ -32,6 +32,8 @@ public class Game {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private int pot;
+
     public Game(Table table, Deck deck) {
         this.table = table;
         this.deck = deck;

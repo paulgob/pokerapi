@@ -1,5 +1,6 @@
 package site.pgsandbox.pokerapi.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -51,7 +52,28 @@ public class GameServiceTest {
         Game startedGame = service.startGame(game.getId());
 
         for (Player player : startedGame.getTable().getPlayers()) {
-            assertTrue(player.getHand().size() == 2);
+            assertEquals(player.getHand().size(), 2);
         }
+    }
+
+    @Test
+    @Transactional
+    void theGamePotEqualsAllThePlayersChips() {
+        Table table = tableService.createATable(2);
+        Player p1 = playerService.createAPlayer("GameTest_1", 100);
+        Player p2 = playerService.createAPlayer("GameTest_2", 100);
+        tableService.addAPlayer(table.getId(), p1.getId());
+        tableService.addAPlayer(table.getId(), p2.getId());
+
+        long deckId = deckService.createADeck().getId();
+        Game game = service.createAGame(table.getId(), deckId);
+        Game startedGame = service.startGame(game.getId());
+
+        int expectedPot = 0;
+        for (Player p : startedGame.getTable().getPlayers()) {
+            expectedPot += p.getChips();
+        }
+
+        assertEquals(expectedPot, startedGame.getPot());
     }
 }
