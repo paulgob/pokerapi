@@ -1,5 +1,6 @@
 package site.pgsandbox.pokerapi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import site.pgsandbox.pokerapi.exception.card.DeckNotFoundException;
@@ -127,6 +128,42 @@ public class GameService {
 
         game.setStatus(Status.PRE_FLOP);
 
-        return game;
+        return repository.save(game);
+    }
+
+    /**
+     * Advance the game to the next stage. Manage the stage's behavior.
+     * @param id The game ID.
+     * @return The game entity.
+     */
+    public Game nextStage(Long id) {
+        Game game = getGameById(id);
+        Deck deck = game.getDeck();
+        List<Card> cards = new ArrayList<Card>();
+
+        switch (game.getStatus()) {
+            case FLOP:
+                for (int i = 0; i < 3; i++) {
+                    cards.add(deckService.getACard(deck.getId()));
+                }
+                game.setStatus(Status.TURN);
+                break;
+            case TURN:
+                cards.add(deckService.getACard(deck.getId()));
+                game.setStatus(Status.RIVER);
+                break;
+            case RIVER:
+                cards.add(deckService.getACard(deck.getId()));
+                game.setStatus(Status.SHOWDOWN);
+                break;
+            case SHOWDOWN:
+                break;
+            default:
+                break;
+        }
+
+        game.getCommunityCards().addAll(cards);
+
+        return repository.save(game);
     }
 }
