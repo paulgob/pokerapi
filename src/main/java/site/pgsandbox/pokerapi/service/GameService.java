@@ -23,17 +23,20 @@ public class GameService {
     private final TableRepository tableRepository;
     private final DeckRepository deckRepository;
     private final DeckService deckService;
+    private final PlayerService playerService;
 
     public GameService(
         GameRepository repository,
         TableRepository tableRepository,
         DeckRepository deckRepository,
-        DeckService deckService
+        DeckService deckService,
+        PlayerService playerService
     ) {
         this.repository = repository;
         this.tableRepository = tableRepository;
         this.deckRepository = deckRepository;
         this.deckService = deckService;
+        this.playerService = playerService;
     }
 
     /**
@@ -119,12 +122,8 @@ public class GameService {
             }
         }
 
-        // Initialize the pot
-        int pot = 0;
-        for (int i = 0; i < players.size(); i++) {
-            pot += players.get(i).getChips();
-        }
-        game.setPot(pot);
+        // No bets placed yet at the start of a hand
+        game.setPot(0);
 
         game.setStatus(Status.PRE_FLOP);
 
@@ -165,5 +164,71 @@ public class GameService {
         game.getCommunityCards().addAll(cards);
 
         return repository.save(game);
+    }
+
+    /**
+     * Recompute the pot as the sum of every player's bet on the game's table.
+     * @param id The game ID.
+     * @return The updated game.
+     */
+    public Game recomputePot(Long id) {
+        Game game = getGameById(id);
+
+        int pot = game
+            .getTable()
+            .getPlayers()
+            .stream()
+            .mapToInt(Player::getBet)
+            .sum();
+
+        game.setPot(pot);
+
+        return repository.save(game);
+    }
+
+    /**
+     * Handle a player's fold action and refresh the pot.
+     * @param gameId The game ID.
+     * @param playerId The player ID.
+     * @return The updated game.
+     */
+    public Game playerFold(Long gameId, Long playerId) {
+        playerService.foldPlayer(playerId);
+        return recomputePot(gameId);
+    }
+
+    /**
+     * Handle a player's check action and refresh the pot.
+     * @param gameId The game ID.
+     * @param playerId The player ID.
+     * @return The updated game.
+     */
+    public Game playerCheck(Long gameId, Long playerId) {
+        playerService.checkPlayer(playerId);
+        return recomputePot(gameId);
+    }
+
+    /**
+     * Handle a player's call action and refresh the pot.
+     * @param gameId The game ID.
+     * @param playerId The player ID.
+     * @param bet The amount of chips bet.
+     * @return The updated game.
+     */
+    public Game playerCall(Long gameId, Long playerId, int bet) {
+        playerService.callPlayer(playerId, bet);
+        return recomputePot(gameId);
+    }
+
+    /**
+     * Handle a player's raise action and refresh the pot.
+     * @param gameId The game ID.
+     * @param playerId The player ID.
+     * @param bet The amount of chips bet.
+     * @return The updated game.
+     */
+    public Game playerRaise(Long gameId, Long playerId, int bet) {
+        playerService.raisePlayer(playerId, bet);
+        return recomputePot(gameId);
     }
 }

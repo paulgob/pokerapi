@@ -45,6 +45,40 @@ public class GameController {
         return service.startGame(id);
     }
 
+    @PutMapping("/game/{gameId}/player/{playerId}/fold")
+    public Game fold(
+        @PathVariable Long gameId,
+        @PathVariable Long playerId
+    ) {
+        return service.playerFold(gameId, playerId);
+    }
+
+    @PutMapping("/game/{gameId}/player/{playerId}/check")
+    public Game check(
+        @PathVariable Long gameId,
+        @PathVariable Long playerId
+    ) {
+        return service.playerCheck(gameId, playerId);
+    }
+
+    @PutMapping("/game/{gameId}/player/{playerId}/call")
+    public Game call(
+        @PathVariable Long gameId,
+        @PathVariable Long playerId,
+        int bet
+    ) {
+        return service.playerCall(gameId, playerId, bet);
+    }
+
+    @PutMapping("/game/{gameId}/player/{playerId}/raise")
+    public Game raise(
+        @PathVariable Long gameId,
+        @PathVariable Long playerId,
+        int bet
+    ) {
+        return service.playerRaise(gameId, playerId, bet);
+    }
+
     @DeleteMapping("/game/{id}")
     public void deleteGame(@PathVariable Long id) {
         service.deleteGame(id);
