@@ -49,15 +49,75 @@ public class GameServiceTest {
 
     @Test
     @Transactional
-    void theGamePotEqualsAllThePlayersChips() {
+    void thePotIsEmptyAfterGameStart() {
         Game startedGame = createStartedGame();
 
-        int expectedPot = 0;
-        for (Player p : startedGame.getTable().getPlayers()) {
-            expectedPot += p.getChips();
-        }
+        assertEquals(0, startedGame.getPot());
+    }
 
-        assertEquals(expectedPot, startedGame.getPot());
+    @Test
+    @Transactional
+    void recomputePotEqualsTheSumOfThePlayersBets() {
+        Game game = createStartedGame();
+        Player p1 = game.getTable().getPlayers().get(0);
+        Player p2 = game.getTable().getPlayers().get(1);
+
+        playerService.callPlayer(p1.getId(), 30);
+        playerService.raisePlayer(p2.getId(), 50);
+
+        Game updated = service.recomputePot(game.getId());
+
+        assertEquals(80, updated.getPot());
+    }
+
+    @Test
+    @Transactional
+    void playerCallUpdatesThePot() {
+        Game game = createStartedGame();
+        Player player = game.getTable().getPlayers().get(0);
+
+        Game updated = service.playerCall(game.getId(), player.getId(), 40);
+
+        assertEquals(40, updated.getPot());
+    }
+
+    @Test
+    @Transactional
+    void playerRaiseAddsToThePot() {
+        Game game = createStartedGame();
+        Player p1 = game.getTable().getPlayers().get(0);
+        Player p2 = game.getTable().getPlayers().get(1);
+
+        service.playerCall(game.getId(), p1.getId(), 20);
+        Game updated = service.playerRaise(game.getId(), p2.getId(), 60);
+
+        assertEquals(80, updated.getPot());
+    }
+
+    @Test
+    @Transactional
+    void playerCheckLeavesThePotUnchanged() {
+        Game game = createStartedGame();
+        Player p1 = game.getTable().getPlayers().get(0);
+        Player p2 = game.getTable().getPlayers().get(1);
+
+        service.playerCall(game.getId(), p1.getId(), 25);
+        Game updated = service.playerCheck(game.getId(), p2.getId());
+
+        assertEquals(25, updated.getPot());
+    }
+
+    @Test
+    @Transactional
+    void playerFoldLeavesThePotUnchanged() {
+        Game game = createStartedGame();
+        Player p1 = game.getTable().getPlayers().get(0);
+        Player p2 = game.getTable().getPlayers().get(1);
+
+        service.playerCall(game.getId(), p1.getId(), 25);
+        Game updated = service.playerFold(game.getId(), p2.getId());
+
+        assertEquals(25, updated.getPot());
     }
 
     @Test

@@ -3,6 +3,7 @@ package site.pgsandbox.pokerapi.model.player;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import java.util.ArrayList;
@@ -29,6 +30,10 @@ public class Player {
     private List<Card> hand = new ArrayList<>();
 
     private int chips;
+    private int bet = 0; // chips placed
+
+    @Enumerated
+    private Actions actionChoosen = Actions.NONE;
 
     public Player(String username, int chips) {
         this.username = username;

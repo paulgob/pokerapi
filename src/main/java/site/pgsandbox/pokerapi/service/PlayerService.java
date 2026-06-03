@@ -2,8 +2,10 @@ package site.pgsandbox.pokerapi.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import site.pgsandbox.pokerapi.exception.player.BetIsHigherThanChipsException;
 import site.pgsandbox.pokerapi.exception.player.DuplicateUsernameException;
 import site.pgsandbox.pokerapi.exception.player.PlayerNotFoundException;
+import site.pgsandbox.pokerapi.model.player.Actions;
 import site.pgsandbox.pokerapi.model.player.Player;
 import site.pgsandbox.pokerapi.repository.PlayerRepository;
 
@@ -72,5 +74,75 @@ public class PlayerService {
      */
     public void deletePlayer(Long id) {
         repository.deleteById(id);
+    }
+
+    /**
+     * Handle the fold actions of a player.
+     * @param id The player ID.
+     * @return The player who does the action.
+     */
+    public Player foldPlayer(Long id) {
+        Player player = getPlayerById(id);
+
+        player.setActionChoosen(Actions.FOLD);
+
+        return repository.save(player);
+    }
+
+    /**
+     * Handle the check actions of a player.
+     * @param id The player ID.
+     * @return The player who does the action.
+     */
+    public Player checkPlayer(Long id) {
+        Player player = getPlayerById(id);
+
+        player.setActionChoosen(Actions.CHECK);
+
+        return repository.save(player);
+    }
+
+    /**
+     * Handle the call actions of a player.
+     * @param id The player ID.
+     * @param bet The amount of chips bet.
+     * @return The player who does the action.
+     */
+    public Player callPlayer(Long id, int bet) {
+        Player player = getPlayerById(id);
+        int chips = player.getChips();
+
+        if (chips < bet) {
+            throw new BetIsHigherThanChipsException(chips, bet);
+        } else {
+            player.setChips(chips - bet);
+        }
+
+        player.setActionChoosen(Actions.CALL);
+        player.setBet(bet);
+
+        return repository.save(player);
+    }
+
+    /**
+     * Handle the raise actions of a player.
+     * @param id The player ID.
+     * @param bet The amount of chips bet.
+     * @return The player who does the action.
+     */
+    public Player raisePlayer(Long id, int bet) {
+        Player player = getPlayerById(id);
+        int chips = player.getChips();
+
+        if (chips < bet) {
+            throw new BetIsHigherThanChipsException(chips, bet);
+        } else {
+            player.setChips(chips - bet);
+        }
+
+        player.setActionChoosen(Actions.RAISE);
+        player.setBet(bet);
+
+        return repository.save(player);
     }
 }
