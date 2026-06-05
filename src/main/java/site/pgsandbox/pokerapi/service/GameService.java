@@ -167,6 +167,16 @@ public class GameService {
                     game.getCommunityCards()
                 );
                 game.setWinner(winner);
+
+                // Give the pot to the winner
+                for (Player player: players) {
+                    if (player == winner) {
+                        int chips = player.getChips();
+                        player.setChips(chips + game.getPot())
+                    }
+                }
+
+                game.setStatus(Status.PRE_FLOP);
                 break;
             default:
                 break;
