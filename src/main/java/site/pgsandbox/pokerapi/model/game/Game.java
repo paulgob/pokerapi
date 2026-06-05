@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import site.pgsandbox.pokerapi.model.card.Card;
 import site.pgsandbox.pokerapi.model.card.Deck;
+import site.pgsandbox.pokerapi.model.player.Player;
 import site.pgsandbox.pokerapi.model.table.Table;
 
 @Entity
@@ -40,6 +41,9 @@ public class Game {
 
     @ElementCollection
     private List<Card> communityCards = new ArrayList<>();
+
+    @ManyToOne
+    private Player winner;
 
     public Game(Table table, Deck deck) {
         this.table = table;

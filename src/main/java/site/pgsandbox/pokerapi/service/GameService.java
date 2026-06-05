@@ -24,19 +24,22 @@ public class GameService {
     private final DeckRepository deckRepository;
     private final DeckService deckService;
     private final PlayerService playerService;
+    private final HandEvaluatorService handEvaluatorService;
 
     public GameService(
         GameRepository repository,
         TableRepository tableRepository,
         DeckRepository deckRepository,
         DeckService deckService,
-        PlayerService playerService
+        PlayerService playerService,
+        HandEvaluatorService handEvaluatorService
     ) {
         this.repository = repository;
         this.tableRepository = tableRepository;
         this.deckRepository = deckRepository;
         this.deckService = deckService;
         this.playerService = playerService;
+        this.handEvaluatorService = handEvaluatorService;
     }
 
     /**
@@ -156,6 +159,14 @@ public class GameService {
                 game.setStatus(Status.SHOWDOWN);
                 break;
             case SHOWDOWN:
+                Table table = game.getTable();
+                List<Player> players = table.getPlayers();
+
+                Player winner = handEvaluatorService.findWinner(
+                    players,
+                    game.getCommunityCards()
+                );
+                game.setWinner(winner);
                 break;
             default:
                 break;
