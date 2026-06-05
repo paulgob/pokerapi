@@ -45,19 +45,18 @@ public class GameController {
         return service.startGame(id);
     }
 
+    @PutMapping("/game/{id}/next-stage")
+    public Game nextStageGame(@PathVariable Long id) {
+        return service.nextStage(id);
+    }
+
     @PutMapping("/game/{gameId}/player/{playerId}/fold")
-    public Game fold(
-        @PathVariable Long gameId,
-        @PathVariable Long playerId
-    ) {
+    public Game fold(@PathVariable Long gameId, @PathVariable Long playerId) {
         return service.playerFold(gameId, playerId);
     }
 
     @PutMapping("/game/{gameId}/player/{playerId}/check")
-    public Game check(
-        @PathVariable Long gameId,
-        @PathVariable Long playerId
-    ) {
+    public Game check(@PathVariable Long gameId, @PathVariable Long playerId) {
         return service.playerCheck(gameId, playerId);
     }
 

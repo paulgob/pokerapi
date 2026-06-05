@@ -143,7 +143,11 @@ public class GameService {
         Deck deck = game.getDeck();
         List<Card> cards = new ArrayList<Card>();
 
-        switch (game.getStatus()) {
+        Status status = game.getStatus();
+
+        game.setStatus(status.next());
+
+        switch (status) {
             case FLOP:
                 for (int i = 0; i < 3; i++) {
                     cards.add(deckService.getACard(deck.getId()));
@@ -169,10 +173,10 @@ public class GameService {
                 game.setWinner(winner);
 
                 // Give the pot to the winner
-                for (Player player: players) {
+                for (Player player : players) {
                     if (player == winner) {
                         int chips = player.getChips();
-                        player.setChips(chips + game.getPot())
+                        player.setChips(chips + game.getPot());
                     }
                 }
 

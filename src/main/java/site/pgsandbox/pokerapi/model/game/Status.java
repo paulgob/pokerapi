@@ -6,5 +6,11 @@ public enum Status {
     FLOP,
     TURN,
     RIVER,
-    SHOWDOWN,
+    SHOWDOWN;
+
+    private static final Status[] vals = values();
+
+    public Status next() {
+        return vals[(this.ordinal() + 1) % vals.length];
+    }
 }
