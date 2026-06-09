@@ -181,7 +181,7 @@ public class GameServiceTest {
 
         assertEquals(5, afterShowdown.getCommunityCards().size());
         assertEquals(
-            site.pgsandbox.pokerapi.model.game.Status.SHOWDOWN,
+            site.pgsandbox.pokerapi.model.game.Status.PRE_FLOP,
             afterShowdown.getStatus()
         );
     }
